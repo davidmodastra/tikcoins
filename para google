@@ -1,0 +1,45 @@
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+
+# RUTA A TU CHROMEDRIVER.EXE EN WINDOWS
+chromedriver_path = r"C:\ruta\a\chromedriver.exe"  # <-- Cambia esta ruta
+
+# RUTA A TU PERFIL DE USUARIO DE GOOGLE CHROME EN WINDOWS
+chrome_profile_path = r"C:\Users\TU_USUARIO\AppData\Local\Google\Chrome\User Data"
+
+def open_tiktok_live_chrome(account):
+    print("[INFO] Configurando opciones de Chrome...")
+    options = Options()
+    # Usa el perfil de Chrome para mantener cookies y sesiones activas
+    options.add_argument(f"user-data-dir={chrome_profile_path}")
+    # Opcional: si tienes múltiples perfiles de Chrome, especifica uno:
+    # options.add_argument("profile-directory=Default")  # o 'Profile 1', etc.
+
+    # Iniciar driver con Service para Windows
+    service = Service(executable_path=chromedriver_path)
+
+    print("[INFO] Iniciando driver de Chrome...")
+    driver = webdriver.Chrome(service=service, options=options)
+
+    try:
+        url = f"https://www.tiktok.com/@{account}/live"
+        print(f"[INFO] Abriendo URL: {url}")
+        driver.get(url)
+        time.sleep(10)
+
+        print("[INFO] Buscando botón de monedas...")
+        coin_button = driver.find_element("xpath", '//button[@aria-label="Coin"]')
+        coin_button.click()
+        print("[OK] Monedas recolectadas correctamente.")
+    except Exception as e:
+        print(f"[ERROR] No se pudo recolectar monedas: {e}")
+    finally:
+        time.sleep(3)
+        driver.quit()
+        print("[INFO] Driver cerrado.")
+
+if __name__ == "__main__":
+    cuenta = input("Ingresa el nombre de usuario de TikTok: ").strip()
+    open_tiktok_live_chrome(cuenta)
